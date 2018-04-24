@@ -19,7 +19,7 @@ public class GeometryGenerator {
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
                 vertices.add(
-                        new Vec2D((double) c / cols, (double) r / rows));
+                        new Vec2D((double) c / (cols-1), (double) r / (rows-1)));
         final List<Integer> indices = new ArrayList<>();
         for (int r = 0; r < rows - 1; r++)
             for (int c = 0; c < cols - 1; c++) {

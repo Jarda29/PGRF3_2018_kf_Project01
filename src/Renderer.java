@@ -16,12 +16,9 @@ public class Renderer implements GLEventListener, MouseListener,
 
     int width, height, ox, oy;
 
-    OGLBuffers cube, grid;
+    OGLBuffers grid;
     OGLTextRenderer textRenderer;
 
-    //	uniform vec3 lightPos; //ve scene
-//	uniform vec3 eyePos; //ve scene
-    int cubeProgram, locCubeMat, locCubeLightPos, locCubeEyePos;
     int gridProgram, locGridMat, locGridLightPos, locGridEyePos;
 
     OGLTexture2D texture;
@@ -50,15 +47,9 @@ public class Renderer implements GLEventListener, MouseListener,
         // shader files are in /shaders/ directory
         // shaders directory must be set as a source directory of the project
         // e.g. in Eclipse via main menu Project/Properties/Java Build Path/Source
-        cubeProgram = ShaderUtils.loadProgram(gl, "/texture");
         gridProgram = ShaderUtils.loadProgram(gl, "/grid");
 
-        createCube(gl);
-        grid = GeometryGenerator.createGrid(gl, 10, 10, "inPosition");
-
-        locCubeMat = gl.glGetUniformLocation(cubeProgram, "mat");
-        locCubeLightPos = gl.glGetUniformLocation(cubeProgram, "lightPos");
-        locCubeEyePos = gl.glGetUniformLocation(cubeProgram, "eyePos");
+        grid = GeometryGenerator.createGrid(gl, 20, 20, "inPosition");
 
         locGridMat = gl.glGetUniformLocation(gridProgram, "mat");
         locGridLightPos = gl.glGetUniformLocation(gridProgram, "lightPos");
@@ -77,64 +68,6 @@ public class Renderer implements GLEventListener, MouseListener,
         textureViewer = new OGLTexture2D.Viewer(gl);
     }
 
-    void createCube(GL2GL3 gl) {
-        // vertices are not shared among triangles (and thus faces) so each face
-        // can have a correct normal in all vertices
-        // also because of this, the vertices can be directly drawn as GL_TRIANGLES
-        // (three and three vertices form one face)
-        // triangles defined in index buffer
-        float[] cube = {
-                // bottom (z-) face
-                1, 0, 0,	0, 0, -1, 	1, 0,
-                0, 0, 0,	0, 0, -1,	0, 0,
-                1, 1, 0,	0, 0, -1,	1, 1,
-                0, 1, 0,	0, 0, -1,	0, 1,
-                // top (z+) face
-                1, 0, 1,	0, 0, 1,	1, 0,
-                0, 0, 1,	0, 0, 1,	0, 0,
-                1, 1, 1,	0, 0, 1,	1, 1,
-                0, 1, 1,	0, 0, 1,	0, 1,
-                // x+ face
-                1, 1, 0,	1, 0, 0,	1, 0,
-                1, 0, 0,	1, 0, 0,	0, 0,
-                1, 1, 1,	1, 0, 0,	1, 1,
-                1, 0, 1,	1, 0, 0,	0, 1,
-                // x- face
-                0, 1, 0,	-1, 0, 0,	1, 0,
-                0, 0, 0,	-1, 0, 0,	0, 0,
-                0, 1, 1,	-1, 0, 0,	1, 1,
-                0, 0, 1,	-1, 0, 0,	0, 1,
-                // y+ face
-                1, 1, 0,	0, 1, 0,	1, 0,
-                0, 1, 0,	0, 1, 0,	0, 0,
-                1, 1, 1,	0, 1, 0,	1, 1,
-                0, 1, 1,	0, 1, 0,	0, 1,
-                // y- face
-                1, 0, 0,	0, -1, 0,	1, 0,
-                0, 0, 0,	0, -1, 0,	0, 0,
-                1, 0, 1,	0, -1, 0,	1, 1,
-                0, 0, 1,	0, -1, 0,	0, 1
-        };
-
-        int[] indexBufferData = new int[36];
-        for (int i = 0; i<6; i++){
-            indexBufferData[i*6] = i*4;
-            indexBufferData[i*6 + 1] = i*4 + 1;
-            indexBufferData[i*6 + 2] = i*4 + 2;
-            indexBufferData[i*6 + 3] = i*4 + 1;
-            indexBufferData[i*6 + 4] = i*4 + 2;
-            indexBufferData[i*6 + 5] = i*4 + 3;
-        }
-
-
-        OGLBuffers.Attrib[] attributes = {
-                new OGLBuffers.Attrib("inPosition", 3),
-                new OGLBuffers.Attrib("inNormal", 3),
-                new OGLBuffers.Attrib("inTextureCoordinates", 2)
-        };
-
-        this.cube = new OGLBuffers(gl, cube, attributes, indexBufferData);
-    }
 
     @Override
     public void display(GLAutoDrawable glDrawable) {
@@ -143,16 +76,6 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         gl.glClear(GL2GL3.GL_COLOR_BUFFER_BIT | GL2GL3.GL_DEPTH_BUFFER_BIT);
 
-        gl.glUseProgram(cubeProgram);
-        gl.glUniformMatrix4fv(locCubeMat, 1, false,
-                ToFloatArray.convert(cam.getViewMatrix().mul(proj)), 0);
-        gl.glUniform3fv(locCubeLightPos, 1,ToFloatArray.convert(lightPos), 0);
-        gl.glUniform3fv(locCubeEyePos, 1,ToFloatArray.convert(cam.getEye()), 0);
-
-
-        texture.bind(cubeProgram, "textureID", 0);
-
-        cube.draw(GL2GL3.GL_TRIANGLES, cubeProgram);
 
         gl.glUseProgram(gridProgram);
         gl.glUniformMatrix4fv(locGridMat, 1, false,
@@ -261,6 +184,6 @@ public class Renderer implements GLEventListener, MouseListener,
 
     @Override
     public void dispose(GLAutoDrawable glDrawable) {
-        glDrawable.getGL().getGL2GL3().glDeleteProgram(cubeProgram);
+        glDrawable.getGL().getGL2GL3().glDeleteProgram(gridProgram);
     }
 }

@@ -14,7 +14,7 @@ public class JOGLApp {
     public void start() {
         try {
             Frame testFrame = new Frame("TestFrame");
-            testFrame.setSize(512, 384);
+            testFrame.setSize(1024, 768);
 
             // setup OpenGL version
             GLProfile profile = GLProfile.getMaximum(true);
@@ -28,7 +28,7 @@ public class JOGLApp {
             canvas.addMouseListener(ren);
             canvas.addMouseMotionListener(ren);
             canvas.addKeyListener(ren);
-            canvas.setSize( 512, 384 );
+            canvas.setSize( 1024, 768 );
 
 
             testFrame.add(canvas);
