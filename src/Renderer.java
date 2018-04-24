@@ -21,6 +21,8 @@ public class Renderer implements GLEventListener, MouseListener,
 
     int gridProgram, locGridMat, locGridLightPos, locGridEyePos;
 
+    int locSurfaceMode;
+
     OGLTexture2D texture;
 
     Camera cam = new Camera();
@@ -29,6 +31,8 @@ public class Renderer implements GLEventListener, MouseListener,
 
 
     OGLTexture2D.Viewer textureViewer;
+
+    private int surfaceMode = 1;
 
     @Override
     public void init(GLAutoDrawable glDrawable) {
@@ -54,6 +58,7 @@ public class Renderer implements GLEventListener, MouseListener,
         locGridMat = gl.glGetUniformLocation(gridProgram, "mat");
         locGridLightPos = gl.glGetUniformLocation(gridProgram, "lightPos");
         locGridEyePos = gl.glGetUniformLocation(gridProgram, "eyePos");
+        locSurfaceMode = gl.glGetUniformLocation(gridProgram, "surfaceMode");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
@@ -82,6 +87,8 @@ public class Renderer implements GLEventListener, MouseListener,
                 ToFloatArray.convert(cam.getViewMatrix().mul(proj)), 0);
         gl.glUniform3fv(locGridLightPos, 1,ToFloatArray.convert(lightPos), 0);
         gl.glUniform3fv(locGridEyePos, 1,ToFloatArray.convert(cam.getEye()), 0);
+
+        gl.glUniform1i(locSurfaceMode, surfaceMode);
 
 
         texture.bind(gridProgram, "textureID", 0);
