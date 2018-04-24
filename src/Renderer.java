@@ -1,4 +1,3 @@
-import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -32,7 +31,10 @@ public class Renderer implements GLEventListener, MouseListener,
 
     OGLTexture2D.Viewer textureViewer;
 
-    private int surfaceMode = 1;
+    private int surfaceModel = 0;
+    private String[] surfaceModelText = {"Grid", "Koule"};
+
+    private String[] textToBePrintedOnScreen = new String[2];
 
     @Override
     public void init(GLAutoDrawable glDrawable) {
@@ -58,7 +60,7 @@ public class Renderer implements GLEventListener, MouseListener,
         locGridMat = gl.glGetUniformLocation(gridProgram, "mat");
         locGridLightPos = gl.glGetUniformLocation(gridProgram, "lightPos");
         locGridEyePos = gl.glGetUniformLocation(gridProgram, "eyePos");
-        locSurfaceMode = gl.glGetUniformLocation(gridProgram, "surfaceMode");
+        locSurfaceMode = gl.glGetUniformLocation(gridProgram, "surfaceModel");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
@@ -88,7 +90,7 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glUniform3fv(locGridLightPos, 1,ToFloatArray.convert(lightPos), 0);
         gl.glUniform3fv(locGridEyePos, 1,ToFloatArray.convert(cam.getEye()), 0);
 
-        gl.glUniform1i(locSurfaceMode, surfaceMode);
+        gl.glUniform1i(locSurfaceMode, surfaceModel);
 
 
         texture.bind(gridProgram, "textureID", 0);
@@ -99,10 +101,16 @@ public class Renderer implements GLEventListener, MouseListener,
         textureViewer.view(texture, -1, -1, 0.5);
 
 
-        String text = new String(this.getClass().getName() + ": [LMB] camera, WSAD");
-
-        textRenderer.drawStr2D(3, height-20, text);
+        textToBePrintedOnScreen[0] = new String(this.getClass().getName() + ": [LMB] camera, WSAD");
+        textToBePrintedOnScreen[1] = "Surface model [NUM 0-1]: "+surfaceModel + " - "+surfaceModelText[surfaceModel];
+        displayText();
         textRenderer.drawStr2D(width-150, 3, " (c) PGRF Jaroslav Langer");
+    }
+
+    private void displayText(){
+        for (int i=0;i<textToBePrintedOnScreen.length;i++) {
+            textRenderer.drawStr2D(3, height-20-(i*20), textToBePrintedOnScreen[i]);
+        }
     }
 
     @Override
@@ -177,6 +185,13 @@ public class Renderer implements GLEventListener, MouseListener,
                 break;
             case KeyEvent.VK_F:
                 cam = cam.mulRadius(1.1f);
+                break;
+
+            case KeyEvent.VK_NUMPAD0:
+                surfaceModel = 0;
+                break;
+            case KeyEvent.VK_NUMPAD1:
+                surfaceModel = 1;
                 break;
         }
     }

@@ -7,24 +7,24 @@ out vec3 worldNormal; //normala ve scene
 
 
 uniform mat4 mat;
-uniform int surfaceMode;
+uniform int surfaceModel;
 
 const float PI = 3.1415927;
 
 vec3 ellipsoid(vec2 param){
-    float s = param.x * 2 * PI;
+    float s = param.x * PI * 2;
     float t = param.y * PI;
 
     return vec3(
         sin(t) * cos(s),
-        2 * sin(t) * sin(s),
+        sin(t) * sin(s),
         cos(t)
     );
 }
 
 vec3 surface(vec2 param) {
     vec3 result;
-    switch(surfaceMode){
+    switch(surfaceModel){
         case 0:
             result.x = param.y;
             result.y = param.x;
