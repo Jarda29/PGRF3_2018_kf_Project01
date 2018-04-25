@@ -11,7 +11,8 @@ uniform int surfaceModel;
 
 const float PI = 3.1415927;
 
-vec3 ellipsoid(vec2 param){
+//kartezke
+vec3 kartez(vec2 param){
     float s = param.x * PI * 2;
     float t = param.y * PI;
 
@@ -21,6 +22,18 @@ vec3 ellipsoid(vec2 param){
         cos(t)
     );
 }
+// kartezke 2
+vec3 kartez2(vec2 param){
+    float s = param.x * PI * 2;
+    float t = param.y * PI;
+
+    return vec3(
+        cos(s),
+        cos(t)*2,
+        sin(s)
+    );
+}
+
 
 vec3 surface(vec2 param) {
     vec3 result;
@@ -31,7 +44,10 @@ vec3 surface(vec2 param) {
             result.z = 0;
             break;
         case 1:
-            result = ellipsoid(param);
+            result = kartez(param);
+            break;
+        case 2:
+            result = kartez2(param);
             break;
     }
 
