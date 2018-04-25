@@ -9,7 +9,7 @@ out vec3 worldNormal; //normala ve scene
 uniform mat4 mat;
 uniform int surfaceModel;
 
-const float PI = 3.1415927;
+const float PI = 3.14159265359;
 
 //kartezke
 vec3 kartez(vec2 param){
@@ -74,3 +74,26 @@ void main() {
 	worldNormal = normal;
 	texCoord = inPosition;
 } 
+
+
+// r - poloměr
+// azimut - phi
+// zenit - theta
+vec3 spherialToCartesian(float r, float phi, float theta) {
+return vec3(
+        r * sin(phi) * cos(theta),
+        r * sin(phi) * sin(theta),
+        r * cos(phi)
+    );
+}
+
+// r - poloměr
+// phi - azimut
+// výška - z
+vec3 cylindricToCartesian(float r, float phi, float z){
+return vec3(
+        r * cos(phi),
+        r * sin(phi),
+        z
+    );
+}
