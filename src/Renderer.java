@@ -20,13 +20,15 @@ public class Renderer implements GLEventListener, MouseListener,
 
     int gridProgram, locGridMat, locGridLightPos, locGridEyePos;
 
-    int locSurfaceMode;
+    int locSurfaceMode, locLightMode, locColorMode;
 
     OGLTexture2D texture;
+    OGLTexture2D textureSh;
+    OGLTexture2D textureSn;
 
     Camera cam = new Camera();
     Mat4 proj;
-    Vec3D lightPos = new Vec3D(3,2,5);
+    Vec3D lightPos = new Vec3D(6,5,8);
 
 
     OGLTexture2D.Viewer textureViewer;
@@ -44,7 +46,20 @@ public class Renderer implements GLEventListener, MouseListener,
             "Trubka - oliva",
             "Mušle - vlastní"};
 
-    private String[] textToBePrintedOnScreen = new String[2];
+    private int lightMode = 0;
+    private String[] lightModeText = {
+            "Ambient only",
+            "Ambient + Diff",
+            "Blinn-Phong"};
+
+    private int colorMode = 0;
+    private String[] colorModeText = {
+            "Color",
+            "Color 2",
+            "Color 3",
+            "Texture"};
+
+    private String[] textToBePrintedOnScreen = new String[4];
 
     @Override
     public void init(GLAutoDrawable glDrawable) {
@@ -71,11 +86,15 @@ public class Renderer implements GLEventListener, MouseListener,
         locGridLightPos = gl.glGetUniformLocation(gridProgram, "lightPos");
         locGridEyePos = gl.glGetUniformLocation(gridProgram, "eyePos");
         locSurfaceMode = gl.glGetUniformLocation(gridProgram, "surfaceModel");
+        locLightMode =  gl.glGetUniformLocation(gridProgram, "lightMode");
+        locColorMode =  gl.glGetUniformLocation(gridProgram, "colorMode");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
 
-        texture = new OGLTexture2D(gl, "/textures/mosaic.jpg");
+        texture = new OGLTexture2D(gl, "/textures/bricks.jpg");
+        textureSh = new OGLTexture2D(gl, "/textures/bricksh.png");
+        textureSn = new OGLTexture2D(gl, "/textures/bricksn.png");
 
         cam = cam.withPosition(new Vec3D(5, 5, 2.5))
                 .withAzimuth(Math.PI * 1.25)
@@ -101,9 +120,11 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glUniform3fv(locGridEyePos, 1,ToFloatArray.convert(cam.getEye()), 0);
 
         gl.glUniform1i(locSurfaceMode, surfaceModel);
+        gl.glUniform1i(locLightMode, lightMode);
+        gl.glUniform1i(locColorMode, colorMode);
 
 
-        texture.bind(gridProgram, "textureID", 0);
+        texture.bind(gridProgram, "texture1", 0);
 
         grid.draw(GL2GL3.GL_TRIANGLES, gridProgram);
 
@@ -113,6 +134,8 @@ public class Renderer implements GLEventListener, MouseListener,
 
         textToBePrintedOnScreen[0] = new String(this.getClass().getName() + ": [LMB] camera, WSAD");
         textToBePrintedOnScreen[1] = "Surface model [NUM 0-9]: "+surfaceModel + " - "+surfaceModelText[surfaceModel];
+        textToBePrintedOnScreen[2] = "Light mode [L]: "+lightMode + " - "+lightModeText[lightMode];
+        textToBePrintedOnScreen[3] = "Color mode [C]: "+colorMode + " - "+colorModeText[colorMode];
         displayText();
         textRenderer.drawStr2D(width-150, 3, " (c) PGRF Jaroslav Langer");
     }
@@ -121,6 +144,22 @@ public class Renderer implements GLEventListener, MouseListener,
         for (int i=0;i<textToBePrintedOnScreen.length;i++) {
             textRenderer.drawStr2D(3, height-20-(i*20), textToBePrintedOnScreen[i]);
         }
+    }
+
+    private void changeLightMode(){
+        if(lightMode <lightModeText.length-1)
+            lightMode++;
+        else
+            lightMode = 0;
+    }
+
+    private void changeColorMode(){
+        if(colorMode<colorModeText.length-1)
+            colorMode++;
+        else
+            colorMode = 0;
+
+
     }
 
     @Override
@@ -225,6 +264,13 @@ public class Renderer implements GLEventListener, MouseListener,
                 break;
             case KeyEvent.VK_NUMPAD9:
                 surfaceModel = 9;
+                break;
+
+            case KeyEvent.VK_L:
+                changeLightMode();
+                break;
+            case KeyEvent.VK_C:
+                changeColorMode();
                 break;
         }
     }
