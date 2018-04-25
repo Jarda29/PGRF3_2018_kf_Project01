@@ -21,15 +21,16 @@ return vec3(
 }
 
 // r - poloměr, phi - azimut, výška - z
-vec3 cylindricToCartesian(float r, float phi, float z){
+vec3 cylindricToCartesian(float r, float theta, float z){
 return vec3(
-        r * cos(phi),
-        r * sin(phi),
+        r * cos(theta),
+        r * sin(theta),
         z
     );
 }
 
 //Modely
+// koule
 vec3 cartesianModel(vec2 param){
     float s = param.x * PI * 2;
     float t = param.y * PI;
@@ -40,7 +41,19 @@ vec3 cartesianModel(vec2 param){
         cos(t)
     );
 }
+// trychtýř
 vec3 cartesianModel2(vec2 param){
+    float s = param.x * PI * 2;
+    float t = param.y * PI;
+
+    return vec3(
+        t*cos(s),
+        t*sin(s),
+        t
+    );
+}
+// trubka - vlastní
+vec3 cartesianModel3(vec2 param){
     float s = param.x * PI * 2;
     float t = param.y * PI;
 
@@ -50,6 +63,7 @@ vec3 cartesianModel2(vec2 param){
         sin(s)
     );
 }
+
 
 // sloní hlava
 vec3 spherialModel(vec2 param){
@@ -62,6 +76,28 @@ vec3 spherialModel(vec2 param){
 
     return spherialToCartesian(r, azimut, zenit);
 }
+// Koule
+vec3 spherialModel2(vec2 param){
+    float s = param.x * PI * 2;
+    float t = param.y * PI;
+
+    float r = 1;
+    float azimut = t; // phi
+    float zenit = s;  // theta
+
+    return spherialToCartesian(r, azimut, zenit);
+}
+// Kobliha - vlastní
+vec3 spherialModel3(vec2 param){
+    float s = param.x * PI;
+    float t = param.y * PI;
+
+    float r = cos(t) * sin(t);
+    float azimut = t; // phi
+    float zenit = s;  // theta
+
+    return spherialToCartesian(r, azimut, zenit);
+}
 
 // sombrero
 vec3 cylindricModel(vec2 param){
@@ -69,10 +105,32 @@ vec3 cylindricModel(vec2 param){
     float t = param.y * PI * 2;
 
     float r = t;
-    float azimut = s;
+    float theta = s;
     float z = 2 * sin(t);
 
-    return cylindricToCartesian(r, azimut, z);
+    return cylindricToCartesian(r, theta, z);
+}
+// trubka - vertikální - oliva
+vec3 cylindricModel2(vec2 param){
+    float s = param.x * PI * 2;
+    float t = param.y * PI * 2;
+
+    float r = 1;
+    float theta = s;
+    float z = t;
+
+    return cylindricToCartesian(r, theta, z);
+}
+// mušle - vlastní
+vec3 cylindricModel3(vec2 param){
+    float s = param.x * PI;
+    float t = param.y * PI;
+
+    float r = t;
+    float theta = log(s);
+    float z = sin(t);
+
+    return cylindricToCartesian(r, theta, z);
 }
 
 vec3 surface(vec2 param) {
@@ -90,16 +148,25 @@ vec3 surface(vec2 param) {
             result = cartesianModel2(param);
             break;
         case 3:
-            result = spherialModel(param);
+            result = cartesianModel3(param);
             break;
         case 4:
             result = spherialModel(param);
             break;
         case 5:
-            result = cylindricModel(param);
+            result = spherialModel2(param);
             break;
         case 6:
+            result = spherialModel3(param);
+            break;
+        case 7:
             result = cylindricModel(param);
+            break;
+        case 8:
+            result = cylindricModel2(param);
+            break;
+        case 9:
+            result = cylindricModel3(param);
             break;
     }
 

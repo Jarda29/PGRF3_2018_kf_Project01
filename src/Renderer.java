@@ -35,11 +35,14 @@ public class Renderer implements GLEventListener, MouseListener,
     private String[] surfaceModelText = {
             "Grid",
             "Koule",
-            "Trubka",
-            "Sloní hlava",
-            "Sloní hlava",
-            "Sombrero",
-            "Sombrero"};
+            "Trychtýř - oliva",
+            "Trubka - vlastní",
+            "Sloní hlava - prezentace",
+            "Koule - oliva",
+            "Kobliha - vlastní",
+            "Sombrero - prezentace",
+            "Trubka - oliva",
+            "Mušle - vlastní"};
 
     private String[] textToBePrintedOnScreen = new String[2];
 
@@ -109,7 +112,7 @@ public class Renderer implements GLEventListener, MouseListener,
 
 
         textToBePrintedOnScreen[0] = new String(this.getClass().getName() + ": [LMB] camera, WSAD");
-        textToBePrintedOnScreen[1] = "Surface model [NUM 0-6]: "+surfaceModel + " - "+surfaceModelText[surfaceModel];
+        textToBePrintedOnScreen[1] = "Surface model [NUM 0-9]: "+surfaceModel + " - "+surfaceModelText[surfaceModel];
         displayText();
         textRenderer.drawStr2D(width-150, 3, " (c) PGRF Jaroslav Langer");
     }
@@ -213,6 +216,15 @@ public class Renderer implements GLEventListener, MouseListener,
                 break;
             case KeyEvent.VK_NUMPAD6:
                 surfaceModel = 6;
+                break;
+            case KeyEvent.VK_NUMPAD7:
+                surfaceModel = 7;
+                break;
+            case KeyEvent.VK_NUMPAD8:
+                surfaceModel = 8;
+                break;
+            case KeyEvent.VK_NUMPAD9:
+                surfaceModel = 9;
                 break;
         }
     }
