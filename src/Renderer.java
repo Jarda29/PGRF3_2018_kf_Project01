@@ -48,6 +48,8 @@ public class Renderer implements GLEventListener, MouseListener,
 
     private int lightMode = 0;
     private String[] lightModeText = {
+            "Per Vertex",
+            "Per Pixel",
             "Ambient only",
             "Ambient + Diff",
             "Blinn-Phong"};

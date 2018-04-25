@@ -1,12 +1,16 @@
 #version 330
 in vec2 inPosition;
-out vec3 vertColor;
+out vec3 vertColor;// pro osvětlení per Vertex
 out vec2 texCoord;
 out vec3 worldPos; //pozice bodu na povrchu telesa ve scene
 out vec3 worldNormal; //normala ve scene
 
+out float intensity;
+
 uniform mat4 mat;
 uniform int surfaceModel;
+uniform int lightMode;
+uniform vec3 lightPos;
 
 const float PI = 3.14159265359;
 
@@ -185,11 +189,19 @@ vec3 surfaceNormal(vec2 param) {
 }
 
 void main() {
+    bool perVertex = lightMode==0;
+
     vec3 position = surface(inPosition);
     vec3 normal = surfaceNormal(inPosition);
 	gl_Position = mat * vec4(position, 1.0);
-	vertColor = normal * 0.5 + 0.5;
+
 	worldPos = position;
 	worldNormal = normal;
 	texCoord = inPosition;
+
+	if(perVertex){
+        vec3 lightVec = normalize(lightPos - worldPos);
+        intensity = dot(lightVec, normal);
+        vertColor = vec3(normal.xyz);
+	}
 }
