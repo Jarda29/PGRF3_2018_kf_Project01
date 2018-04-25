@@ -10,7 +10,7 @@ uniform vec3 eyePos; //ve scene
 void main() {
     vec3 Drgb = texture(textureID, texCoord).rgb;
     vec3 Srgb = vec3(1);
-    vec3 Argb = vec3(0.2);
+    vec3 Argb = vec3(0.4);
     vec3 Lrgb = vec3(0.8,0.8,1);
     vec3 normal = normalize(worldNormal);
     vec3 lightVec = normalize(lightPos - worldPos);

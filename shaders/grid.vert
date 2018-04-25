@@ -5,14 +5,32 @@ out vec2 texCoord;
 out vec3 worldPos; //pozice bodu na povrchu telesa ve scene
 out vec3 worldNormal; //normala ve scene
 
-
 uniform mat4 mat;
 uniform int surfaceModel;
 
 const float PI = 3.14159265359;
 
-//kartezke
-vec3 kartez(vec2 param){
+// Převody soustav
+// r - poloměr, azimut - phi, zenit - theta
+vec3 spherialToCartesian(float r, float phi, float theta) {
+return vec3(
+        r * sin(phi) * cos(theta),
+        r * sin(phi) * sin(theta),
+        r * cos(phi)
+    );
+}
+
+// r - poloměr, phi - azimut, výška - z
+vec3 cylindricToCartesian(float r, float phi, float z){
+return vec3(
+        r * cos(phi),
+        r * sin(phi),
+        z
+    );
+}
+
+//Modely
+vec3 cartesianModel(vec2 param){
     float s = param.x * PI * 2;
     float t = param.y * PI;
 
@@ -22,8 +40,7 @@ vec3 kartez(vec2 param){
         cos(t)
     );
 }
-// kartezke 2
-vec3 kartez2(vec2 param){
+vec3 cartesianModel2(vec2 param){
     float s = param.x * PI * 2;
     float t = param.y * PI;
 
@@ -34,6 +51,29 @@ vec3 kartez2(vec2 param){
     );
 }
 
+// sloní hlava
+vec3 spherialModel(vec2 param){
+    float s = param.x * PI * 2;
+    float t = param.y * PI;
+
+    float r = 3 + cos(4*s);
+    float azimut = s; // phi
+    float zenit = t;  // theta
+
+    return spherialToCartesian(r, azimut, zenit);
+}
+
+// sombrero
+vec3 cylindricModel(vec2 param){
+    float s = param.x * PI * 2;
+    float t = param.y * PI * 2;
+
+    float r = t;
+    float azimut = s;
+    float z = 2 * sin(t);
+
+    return cylindricToCartesian(r, azimut, z);
+}
 
 vec3 surface(vec2 param) {
     vec3 result;
@@ -44,10 +84,22 @@ vec3 surface(vec2 param) {
             result.z = 0;
             break;
         case 1:
-            result = kartez(param);
+            result = cartesianModel(param);
             break;
         case 2:
-            result = kartez2(param);
+            result = cartesianModel2(param);
+            break;
+        case 3:
+            result = spherialModel(param);
+            break;
+        case 4:
+            result = spherialModel(param);
+            break;
+        case 5:
+            result = cylindricModel(param);
+            break;
+        case 6:
+            result = cylindricModel(param);
             break;
     }
 
@@ -73,27 +125,4 @@ void main() {
 	worldPos = position;
 	worldNormal = normal;
 	texCoord = inPosition;
-} 
-
-
-// r - poloměr
-// azimut - phi
-// zenit - theta
-vec3 spherialToCartesian(float r, float phi, float theta) {
-return vec3(
-        r * sin(phi) * cos(theta),
-        r * sin(phi) * sin(theta),
-        r * cos(phi)
-    );
-}
-
-// r - poloměr
-// phi - azimut
-// výška - z
-vec3 cylindricToCartesian(float r, float phi, float z){
-return vec3(
-        r * cos(phi),
-        r * sin(phi),
-        z
-    );
 }

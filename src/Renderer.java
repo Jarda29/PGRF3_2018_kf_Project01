@@ -32,7 +32,14 @@ public class Renderer implements GLEventListener, MouseListener,
     OGLTexture2D.Viewer textureViewer;
 
     private int surfaceModel = 0;
-    private String[] surfaceModelText = {"Grid", "Koule", "Trubka"};
+    private String[] surfaceModelText = {
+            "Grid",
+            "Koule",
+            "Trubka",
+            "Sloní hlava",
+            "Sloní hlava",
+            "Sombrero",
+            "Sombrero"};
 
     private String[] textToBePrintedOnScreen = new String[2];
 
@@ -102,7 +109,7 @@ public class Renderer implements GLEventListener, MouseListener,
 
 
         textToBePrintedOnScreen[0] = new String(this.getClass().getName() + ": [LMB] camera, WSAD");
-        textToBePrintedOnScreen[1] = "Surface model [NUM 0-2]: "+surfaceModel + " - "+surfaceModelText[surfaceModel];
+        textToBePrintedOnScreen[1] = "Surface model [NUM 0-6]: "+surfaceModel + " - "+surfaceModelText[surfaceModel];
         displayText();
         textRenderer.drawStr2D(width-150, 3, " (c) PGRF Jaroslav Langer");
     }
@@ -114,8 +121,7 @@ public class Renderer implements GLEventListener, MouseListener,
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width,
-                        int height) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         this.width = width;
         this.height = height;
         proj = new Mat4PerspRH(Math.PI / 4, height / (double) width, 0.01, 1000.0);
@@ -195,6 +201,18 @@ public class Renderer implements GLEventListener, MouseListener,
                 break;
             case KeyEvent.VK_NUMPAD2:
                 surfaceModel = 2;
+                break;
+            case KeyEvent.VK_NUMPAD3:
+                surfaceModel = 3;
+                break;
+            case KeyEvent.VK_NUMPAD4:
+                surfaceModel = 4;
+                break;
+            case KeyEvent.VK_NUMPAD5:
+                surfaceModel = 5;
+                break;
+            case KeyEvent.VK_NUMPAD6:
+                surfaceModel = 6;
                 break;
         }
     }
