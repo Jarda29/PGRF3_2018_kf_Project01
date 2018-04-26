@@ -6,11 +6,13 @@ out vec3 worldPos; //pozice bodu na povrchu telesa ve scene
 out vec3 worldNormal; //normala ve scene
 
 out float intensity;
+out vec3 lightPos;
 
 uniform mat4 mat;
 uniform int surfaceModel;
 uniform int lightMode;
-uniform vec3 lightPos;
+uniform float time;
+
 
 const float PI = 3.14159265359;
 
@@ -198,6 +200,8 @@ void main() {
 	worldPos = position;
 	worldNormal = normal;
 	texCoord = inPosition;
+
+	lightPos = vec3(6 + 5*sin(time),5 + 5*cos(-0.5 + time),7);
 
 	if(perVertex){
         vec3 lightVec = normalize(lightPos - worldPos);

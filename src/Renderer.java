@@ -18,9 +18,9 @@ public class Renderer implements GLEventListener, MouseListener,
     OGLBuffers grid;
     OGLTextRenderer textRenderer;
 
-    int gridProgram, locGridMat, locGridLightPos, locGridEyePos;
+    int gridProgram, locGridMat, locGridEyePos;
 
-    int locSurfaceMode, locLightMode, locColorMode;
+    int locSurfaceMode, locLightMode, locColorMode, locTime;
 
     OGLTexture2D texture;
     OGLTexture2D textureSh;
@@ -28,8 +28,6 @@ public class Renderer implements GLEventListener, MouseListener,
 
     Camera cam = new Camera();
     Mat4 proj;
-    Vec3D lightPos = new Vec3D(6,5,8);
-
 
     OGLTexture2D.Viewer textureViewer;
 
@@ -61,6 +59,8 @@ public class Renderer implements GLEventListener, MouseListener,
             "Color 3",
             "Texture"};
 
+    private float time = 0;
+
     private String[] textToBePrintedOnScreen = new String[4];
 
     @Override
@@ -85,11 +85,11 @@ public class Renderer implements GLEventListener, MouseListener,
         grid = GeometryGenerator.createGrid(gl, 20, 20, "inPosition");
 
         locGridMat = gl.glGetUniformLocation(gridProgram, "mat");
-        locGridLightPos = gl.glGetUniformLocation(gridProgram, "lightPos");
         locGridEyePos = gl.glGetUniformLocation(gridProgram, "eyePos");
         locSurfaceMode = gl.glGetUniformLocation(gridProgram, "surfaceModel");
         locLightMode =  gl.glGetUniformLocation(gridProgram, "lightMode");
         locColorMode =  gl.glGetUniformLocation(gridProgram, "colorMode");
+        locTime = gl.glGetUniformLocation(gridProgram, "time");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
@@ -118,13 +118,14 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glUseProgram(gridProgram);
         gl.glUniformMatrix4fv(locGridMat, 1, false,
                 ToFloatArray.convert(cam.getViewMatrix().mul(proj)), 0);
-        gl.glUniform3fv(locGridLightPos, 1,ToFloatArray.convert(lightPos), 0);
         gl.glUniform3fv(locGridEyePos, 1,ToFloatArray.convert(cam.getEye()), 0);
 
         gl.glUniform1i(locSurfaceMode, surfaceModel);
         gl.glUniform1i(locLightMode, lightMode);
         gl.glUniform1i(locColorMode, colorMode);
+        gl.glUniform1f(locTime, time);
 
+        time += 0.1;
 
         texture.bind(gridProgram, "texture1", 0);
 

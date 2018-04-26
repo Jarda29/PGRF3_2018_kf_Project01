@@ -4,11 +4,11 @@ in vec3 worldNormal; //normala ve scene
 in vec3 vertColor;
 in vec2 texCoord;
 in float intensity;
+in vec3 lightPos; //ve scene
 
 out vec4 outColor;
 
 uniform sampler2D textureBase;
-uniform vec3 lightPos; //ve scene
 uniform vec3 eyePos; //ve scene
 uniform int lightMode;
 uniform int colorMode;
