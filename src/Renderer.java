@@ -50,7 +50,8 @@ public class Renderer implements GLEventListener, MouseListener,
             "Per Pixel",
             "Ambient only",
             "Ambient + Diff",
-            "Blinn-Phong"};
+            "Blinn-Phong",
+            "Normal mapping"};
 
     private int colorMode = 0;
     private String[] colorModeText = {
@@ -127,7 +128,9 @@ public class Renderer implements GLEventListener, MouseListener,
 
         time += 0.1;
 
-        texture.bind(gridProgram, "texture1", 0);
+        texture.bind(gridProgram, "textureBase", 0);
+        textureSh.bind(gridProgram, "textureSh", 1);
+        textureSn.bind(gridProgram, "textureSn", 2);
 
         grid.draw(GL2GL3.GL_TRIANGLES, gridProgram);
 
@@ -154,6 +157,9 @@ public class Renderer implements GLEventListener, MouseListener,
             lightMode++;
         else
             lightMode = 0;
+
+        if(lightMode==5) // když normal mapping - color: Textura
+            colorMode = 3;
     }
 
     private void changeColorMode(){
@@ -161,8 +167,6 @@ public class Renderer implements GLEventListener, MouseListener,
             colorMode++;
         else
             colorMode = 0;
-
-
     }
 
     @Override

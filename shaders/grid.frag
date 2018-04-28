@@ -9,6 +9,8 @@ in vec3 lightPos; //ve scene
 out vec4 outColor;
 
 uniform sampler2D textureBase;
+uniform sampler2D textureSh;
+uniform sampler2D textureSn;
 uniform vec3 eyePos; //ve scene
 uniform int lightMode;
 uniform int colorMode;
@@ -77,8 +79,33 @@ vec4 blinnPhong(){
     vec3 r = -reflect(lightVec, normal);
     float d = max(dot(lightVec, normal), 0);
     float s = pow(max(dot(r, eyeVec), 0), 90);
-    vec3 Irgb = Argb * Drgb + Lrgb * Drgb * d + Lrgb * Srgb * s; //finalni vysledek
+    vec3 Irgb = Argb * Drgb +
+                Lrgb * Drgb * d +
+                Lrgb * Srgb * s; //finalni vysledek
 	return vec4(Irgb, 1);
+}
+
+vec4 normalMapping(){
+    vec3 Drgb = texture(textureBase, texCoord).rgb;
+    vec3 Srgb = vec3(1);
+    vec3 Argb = vec3(0.4);
+    vec3 Lrgb = vec3(0.8,0.8,1);
+
+    vec3 bump = texture(textureSn, texCoord).rgb;
+    bump = normalize(bump*worldNormal);
+
+    vec3 normal = normalize(worldNormal);
+    vec3 lightVec = normalize(lightPos - worldPos);
+    vec3 eyeVec = normalize(eyePos - worldPos);
+
+    vec3 r = -reflect(lightVec, bump);
+    float d = max(dot(lightVec, bump), 0);
+    float s = pow(max(dot(r, eyeVec), 0), 90);
+
+    vec3 Irgb = Argb * Drgb +
+                Lrgb * Drgb * d +
+                Lrgb * Srgb * s; //finalni vysledek
+   	return vec4(Irgb, 1);
 }
 
 
@@ -99,6 +126,9 @@ vec4 light(){
             break;
         case 4:
             col = blinnPhong();
+            break;
+        case 5:
+            col = normalMapping();
             break;
     }
     return col;
