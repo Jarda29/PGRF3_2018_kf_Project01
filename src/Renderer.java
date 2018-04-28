@@ -51,7 +51,8 @@ public class Renderer implements GLEventListener, MouseListener,
             "Ambient only",
             "Ambient + Diff",
             "Blinn-Phong",
-            "Normal mapping"};
+            "Normal mapping",
+            "Paralax mapping"};
 
     private int colorMode = 0;
     private String[] colorModeText = {
@@ -158,7 +159,7 @@ public class Renderer implements GLEventListener, MouseListener,
         else
             lightMode = 0;
 
-        if(lightMode==5) // když normal mapping - color: Textura
+        if(lightMode==5 || colorMode==6) // když normal/paralax mapping - color: Textura
             colorMode = 3;
     }
 

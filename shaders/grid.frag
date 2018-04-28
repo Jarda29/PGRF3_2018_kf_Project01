@@ -15,6 +15,8 @@ uniform vec3 eyePos; //ve scene
 uniform int lightMode;
 uniform int colorMode;
 
+const vec2 bumpSize = vec2(0.04, -0.02); // TODO nastavitelné z GUI
+
 vec3 color(){
     vec3 result;
     switch(colorMode){
@@ -108,6 +110,33 @@ vec4 normalMapping(){
    	return vec4(Irgb, 1);
 }
 
+vec4 paralaxMapping(){
+    vec3 normal = normalize(worldNormal);
+    vec3 lightVec = normalize(lightPos - worldPos);
+    vec3 eyeVec = normalize(eyePos - worldPos);
+
+    float height = texture(textureSh, texCoord).r;
+    height = height * bumpSize.x + bumpSize.y;
+    vec2 textUV = texCoord.xy + eyeVec.xy * height;
+
+    vec3 Drgb = texture(textureBase, textUV).rgb;
+    vec3 Srgb = vec3(1);
+    vec3 Argb = vec3(0.4);
+    vec3 Lrgb = vec3(0.8,0.8,1);
+
+    vec3 bump = texture(textureSn, textUV).rgb;
+    bump = normalize(bump*worldNormal);
+
+    vec3 r = -reflect(lightVec, bump);
+    float d = max(dot(lightVec, bump), 0);
+    float s = pow(max(dot(r, eyeVec), 0), 90);
+
+    vec3 Irgb = Argb * Drgb +
+                Lrgb * Drgb * d +
+                Lrgb * Srgb * s; //finalni vysledek
+   	return vec4(Irgb, 1);
+}
+
 
 vec4 light(){
     vec4 col;
@@ -129,6 +158,9 @@ vec4 light(){
             break;
         case 5:
             col = normalMapping();
+            break;
+        case 6:
+            col = paralaxMapping();
             break;
     }
     return col;

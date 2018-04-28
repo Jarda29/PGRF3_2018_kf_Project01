@@ -180,8 +180,6 @@ vec3 surface(vec2 param) {
 }
 
 vec3 surfaceNormal(vec2 param) {
-//    vec3 tx = vec3(0,1,0);//parcialni derivace podle param.x;
-//    vec3 ty = vec3(1,0,0);//parcialni derivace podle param.y;
     float delta = 1e-5;
     vec3 tx = (surface(param + vec2(delta, 0))
                 - surface(param - vec2(delta, 0))) / (2 * delta);
