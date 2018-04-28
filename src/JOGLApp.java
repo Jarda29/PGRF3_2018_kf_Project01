@@ -28,7 +28,7 @@ public class JOGLApp {
             canvas.addMouseListener(ren);
             canvas.addMouseMotionListener(ren);
             canvas.addKeyListener(ren);
-            canvas.setSize( 1024, 768 );
+            canvas.setSize(1024, 768);
 
 
             testFrame.add(canvas);

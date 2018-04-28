@@ -95,10 +95,10 @@ public class Renderer implements GLEventListener, MouseListener,
         locGridMat = gl.glGetUniformLocation(gridProgram, "mat");
         locGridEyePos = gl.glGetUniformLocation(gridProgram, "eyePos");
         locSurfaceMode = gl.glGetUniformLocation(gridProgram, "surfaceModel");
-        locLightMode =  gl.glGetUniformLocation(gridProgram, "lightMode");
-        locColorMode =  gl.glGetUniformLocation(gridProgram, "colorMode");
+        locLightMode = gl.glGetUniformLocation(gridProgram, "lightMode");
+        locColorMode = gl.glGetUniformLocation(gridProgram, "colorMode");
         locTime = gl.glGetUniformLocation(gridProgram, "time");
-        locBumpMode =  gl.glGetUniformLocation(gridProgram, "bumpMode");
+        locBumpMode = gl.glGetUniformLocation(gridProgram, "bumpMode");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
@@ -127,7 +127,7 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glUseProgram(gridProgram);
         gl.glUniformMatrix4fv(locGridMat, 1, false,
                 ToFloatArray.convert(cam.getViewMatrix().mul(proj)), 0);
-        gl.glUniform3fv(locGridEyePos, 1,ToFloatArray.convert(cam.getEye()), 0);
+        gl.glUniform3fv(locGridEyePos, 1, ToFloatArray.convert(cam.getEye()), 0);
 
         gl.glUniform1i(locSurfaceMode, surfaceModel);
         gl.glUniform1i(locLightMode, lightMode);
@@ -148,39 +148,39 @@ public class Renderer implements GLEventListener, MouseListener,
 
 
         textToBePrintedOnScreen[0] = new String(this.getClass().getName() + ": [LMB] camera, WSAD");
-        textToBePrintedOnScreen[1] = "Surface model [NUM 0-9]: "+surfaceModel + " - "+surfaceModelText[surfaceModel];
-        textToBePrintedOnScreen[2] = "Light mode [L]: "+lightMode + " - "+lightModeText[lightMode];
-        textToBePrintedOnScreen[3] = "Color mode [C]: "+colorMode + " - "+colorModeText[colorMode];
-        textToBePrintedOnScreen[4] = "Bump mode [B]: "+bumpMode + " - "+bumpModeText[bumpMode];
+        textToBePrintedOnScreen[1] = "Surface model [NUM 0-9]: " + surfaceModel + " - " + surfaceModelText[surfaceModel];
+        textToBePrintedOnScreen[2] = "Light mode [L]: " + lightMode + " - " + lightModeText[lightMode];
+        textToBePrintedOnScreen[3] = "Color mode [C]: " + colorMode + " - " + colorModeText[colorMode];
+        textToBePrintedOnScreen[4] = "Bump mode [B]: " + bumpMode + " - " + bumpModeText[bumpMode];
         displayText();
-        textRenderer.drawStr2D(width-150, 3, " (c) PGRF Jaroslav Langer");
+        textRenderer.drawStr2D(width - 150, 3, " (c) PGRF Jaroslav Langer");
     }
 
-    private void displayText(){
-        for (int i=0;i<textToBePrintedOnScreen.length;i++) {
-            textRenderer.drawStr2D(3, height-20-(i*20), textToBePrintedOnScreen[i]);
+    private void displayText() {
+        for (int i = 0; i < textToBePrintedOnScreen.length; i++) {
+            textRenderer.drawStr2D(3, height - 20 - (i * 20), textToBePrintedOnScreen[i]);
         }
     }
 
-    private void changeLightMode(){
-        if(lightMode <lightModeText.length-1)
+    private void changeLightMode() {
+        if (lightMode < lightModeText.length - 1)
             lightMode++;
         else
             lightMode = 0;
 
-        if(lightMode==5 || colorMode==6) // když normal/paralax mapping - color: Textura
+        if (lightMode == 5 || colorMode == 6) // když normal/paralax mapping - color: Textura
             colorMode = 3;
     }
 
-    private void changeColorMode(){
-        if(colorMode<colorModeText.length-1)
+    private void changeColorMode() {
+        if (colorMode < colorModeText.length - 1)
             colorMode++;
         else
             colorMode = 0;
     }
 
-    private void changeBumpMode(){
-        if(bumpMode<bumpModeText.length-1)
+    private void changeBumpMode() {
+        if (bumpMode < bumpModeText.length - 1)
             bumpMode++;
         else
             bumpMode = 0;
