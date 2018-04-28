@@ -20,7 +20,7 @@ public class Renderer implements GLEventListener, MouseListener,
 
     int gridProgram, locGridMat, locGridEyePos;
 
-    int locSurfaceMode, locLightMode, locColorMode, locTime;
+    int locSurfaceMode, locLightMode, locColorMode, locTime, locBumpMode;
 
     OGLTexture2D texture;
     OGLTexture2D textureSh;
@@ -63,7 +63,13 @@ public class Renderer implements GLEventListener, MouseListener,
 
     private float time = 0;
 
-    private String[] textToBePrintedOnScreen = new String[4];
+    private int bumpMode = 0;
+    private String[] bumpModeText = {
+            "0.02 ; 0",
+            "0.04 ; -0.02",
+            "0.09 ; -0.02",};
+
+    private String[] textToBePrintedOnScreen = new String[5];
 
     @Override
     public void init(GLAutoDrawable glDrawable) {
@@ -92,6 +98,7 @@ public class Renderer implements GLEventListener, MouseListener,
         locLightMode =  gl.glGetUniformLocation(gridProgram, "lightMode");
         locColorMode =  gl.glGetUniformLocation(gridProgram, "colorMode");
         locTime = gl.glGetUniformLocation(gridProgram, "time");
+        locBumpMode =  gl.glGetUniformLocation(gridProgram, "bumpMode");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
@@ -126,6 +133,7 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glUniform1i(locLightMode, lightMode);
         gl.glUniform1i(locColorMode, colorMode);
         gl.glUniform1f(locTime, time);
+        gl.glUniform1i(locBumpMode, bumpMode);
 
         time += 0.1;
 
@@ -143,6 +151,7 @@ public class Renderer implements GLEventListener, MouseListener,
         textToBePrintedOnScreen[1] = "Surface model [NUM 0-9]: "+surfaceModel + " - "+surfaceModelText[surfaceModel];
         textToBePrintedOnScreen[2] = "Light mode [L]: "+lightMode + " - "+lightModeText[lightMode];
         textToBePrintedOnScreen[3] = "Color mode [C]: "+colorMode + " - "+colorModeText[colorMode];
+        textToBePrintedOnScreen[4] = "Bump mode [B]: "+bumpMode + " - "+bumpModeText[bumpMode];
         displayText();
         textRenderer.drawStr2D(width-150, 3, " (c) PGRF Jaroslav Langer");
     }
@@ -168,6 +177,13 @@ public class Renderer implements GLEventListener, MouseListener,
             colorMode++;
         else
             colorMode = 0;
+    }
+
+    private void changeBumpMode(){
+        if(bumpMode<bumpModeText.length-1)
+            bumpMode++;
+        else
+            bumpMode = 0;
     }
 
     @Override
@@ -279,6 +295,9 @@ public class Renderer implements GLEventListener, MouseListener,
                 break;
             case KeyEvent.VK_C:
                 changeColorMode();
+                break;
+            case KeyEvent.VK_B:
+                changeBumpMode();
                 break;
         }
     }

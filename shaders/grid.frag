@@ -14,8 +14,7 @@ uniform sampler2D textureSn;
 uniform vec3 eyePos; //ve scene
 uniform int lightMode;
 uniform int colorMode;
-
-const vec2 bumpSize = vec2(0.04, -0.02); // TODO nastavitelné z GUI
+uniform int bumpMode;
 
 vec3 color(){
     vec3 result;
@@ -110,13 +109,25 @@ vec4 normalMapping(){
    	return vec4(Irgb, 1);
 }
 
+vec2 bumpSize(){
+    switch(bumpMode){
+        case 0:
+            return vec2(0.02,0);
+        case 1:
+            return vec2(0.04,-0.02);
+        case 2:
+             return vec2(0.09,-0.02);
+    }
+    return vec2(0,0);
+}
+
 vec4 paralaxMapping(){
     vec3 normal = normalize(worldNormal);
     vec3 lightVec = normalize(lightPos - worldPos);
     vec3 eyeVec = normalize(eyePos - worldPos);
 
     float height = texture(textureSh, texCoord).r;
-    height = height * bumpSize.x + bumpSize.y;
+    height = height * bumpSize().x + bumpSize().y;
     vec2 textUV = texCoord.xy + eyeVec.xy * height;
 
     vec3 Drgb = texture(textureBase, textUV).rgb;
