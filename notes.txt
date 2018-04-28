@@ -1,0 +1,11 @@
+Vycházel jsem z nasdíleného projektu 2018-pgrf3-cKF
+
+Tedy, úplně stejné závislosti a nastavení struktury projektu.
+
+Import závislosti gluegen-rt.jar a jogl-all.jar
+Adresáře res a shaders označit jako resources
+
+Ovládání typické WASD.
+
+Přepínání různých modů zobrazení viz levý horní roh v aplikaci.
+
