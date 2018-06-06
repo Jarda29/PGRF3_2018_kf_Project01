@@ -176,6 +176,8 @@ public class Renderer implements GLEventListener, MouseListener,
     }
 
     private void changeSurface(int surfaceNumber){
+        if(transformationProgress<100)
+            return;
         surfaceModelPrevious = surfaceModel;
         surfaceModel = surfaceNumber;
         transformationProgress = 0;
