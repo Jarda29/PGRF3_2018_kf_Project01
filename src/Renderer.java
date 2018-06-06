@@ -25,6 +25,9 @@ public class Renderer implements GLEventListener, MouseListener,
     int locTransformationProgress;
     int transformationProgress = 100;
 
+    int surfaceModelPrevious = 0;
+    int locSurfaceModelPrevious;
+
     OGLTexture2D texture;
     OGLTexture2D textureSh;
     OGLTexture2D textureSn;
@@ -103,6 +106,7 @@ public class Renderer implements GLEventListener, MouseListener,
         locTime = gl.glGetUniformLocation(gridProgram, "time");
         locBumpMode = gl.glGetUniformLocation(gridProgram, "bumpMode");
         locTransformationProgress = gl.glGetUniformLocation(gridProgram, "transformationProgress");
+        locSurfaceModelPrevious = gl.glGetUniformLocation(gridProgram, "surfaceModelPrevious");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
@@ -139,6 +143,7 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glUniform1f(locTime, time);
         gl.glUniform1i(locBumpMode, bumpMode);
         gl.glUniform1i(locTransformationProgress, transformationProgress);
+        gl.glUniform1i(locSurfaceModelPrevious, surfaceModelPrevious);
 
         time += 0.1;
         if(transformationProgress<100)
@@ -171,6 +176,7 @@ public class Renderer implements GLEventListener, MouseListener,
     }
 
     private void changeSurface(int surfaceNumber){
+        surfaceModelPrevious = surfaceModel;
         surfaceModel = surfaceNumber;
         transformationProgress = 0;
     }

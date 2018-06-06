@@ -10,6 +10,7 @@ out vec3 lightPos;
 
 uniform mat4 mat;
 uniform int surfaceModel;
+uniform int surfaceModelPrevious;
 uniform int lightMode;
 uniform float time;
 uniform int transformationProgress;
@@ -158,9 +159,9 @@ vec3 cylindricModel3(vec2 param){
     return cylindricToCartesian(r, theta, z);
 }
 
-vec3 surface(vec2 param) {
+vec3 surface(vec2 param, int model) {
     vec3 result;
-    switch(surfaceModel){
+    switch(model){
         case 0:
             result.x = param.x;
             result.y = param.y;
@@ -194,27 +195,29 @@ vec3 surface(vec2 param) {
             result = cylindricModel3(param);
             break;
     }
-    vec3 param1 = vec3(
-        param.x,
-        param.y,
-        0
-    );
-    return slowTransform(param1, result);
+    return result;
+}
+
+vec3 getNewCoordinates(){
+    vec3 oldCoordinates = surface(inPosition, surfaceModelPrevious);
+    vec3 targetCoordinates =  surface(inPosition, surfaceModel);
+
+    return slowTransform(oldCoordinates, targetCoordinates);
 }
 
 vec3 surfaceNormal(vec2 param) {
     float delta = 1e-5;
-    vec3 tx = (surface(param + vec2(delta, 0))
-                - surface(param - vec2(delta, 0))) / (2 * delta);
-    vec3 ty = (surface(param + vec2(0, delta))
-                - surface(param - vec2(0, delta))) / (2 * delta);
-    return cross(ty, tx);
+        vec3 tx = (surface(param + vec2(delta, 0), surfaceModel)
+                    - surface(param - vec2(delta, 0), surfaceModel)) / (2 * delta);
+        vec3 ty = (surface(param + vec2(0, delta), surfaceModel)
+                    - surface(param - vec2(0, delta), surfaceModel)) / (2 * delta);
+        return cross(ty, tx);
 }
 
 void main() {
     bool perVertex = lightMode==0;
 
-    vec3 position = surface(inPosition);
+    vec3 position = getNewCoordinates();
     vec3 normal = surfaceNormal(inPosition);
 	gl_Position = mat * vec4(position, 1.0);
 
