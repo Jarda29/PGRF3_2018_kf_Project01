@@ -22,6 +22,9 @@ public class Renderer implements GLEventListener, MouseListener,
 
     int locSurfaceMode, locLightMode, locColorMode, locTime, locBumpMode;
 
+    int locTransformationProgress;
+    int transformationProgress = 100;
+
     OGLTexture2D texture;
     OGLTexture2D textureSh;
     OGLTexture2D textureSn;
@@ -99,6 +102,7 @@ public class Renderer implements GLEventListener, MouseListener,
         locColorMode = gl.glGetUniformLocation(gridProgram, "colorMode");
         locTime = gl.glGetUniformLocation(gridProgram, "time");
         locBumpMode = gl.glGetUniformLocation(gridProgram, "bumpMode");
+        locTransformationProgress = gl.glGetUniformLocation(gridProgram, "transformationProgress");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
@@ -134,8 +138,12 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glUniform1i(locColorMode, colorMode);
         gl.glUniform1f(locTime, time);
         gl.glUniform1i(locBumpMode, bumpMode);
+        gl.glUniform1i(locTransformationProgress, transformationProgress);
 
         time += 0.1;
+        if(transformationProgress<100)
+            transformationProgress += 1;
+
 
         texture.bind(gridProgram, "textureBase", 0);
         textureSh.bind(gridProgram, "textureSh", 1);
@@ -160,6 +168,11 @@ public class Renderer implements GLEventListener, MouseListener,
         for (int i = 0; i < textToBePrintedOnScreen.length; i++) {
             textRenderer.drawStr2D(3, height - 20 - (i * 20), textToBePrintedOnScreen[i]);
         }
+    }
+
+    private void changeSurface(int surfaceNumber){
+        surfaceModel = surfaceNumber;
+        transformationProgress = 0;
     }
 
     private void changeLightMode() {
@@ -260,34 +273,34 @@ public class Renderer implements GLEventListener, MouseListener,
                 break;
 
             case KeyEvent.VK_NUMPAD0:
-                surfaceModel = 0;
+                changeSurface(0);
                 break;
             case KeyEvent.VK_NUMPAD1:
-                surfaceModel = 1;
+                changeSurface(1);
                 break;
             case KeyEvent.VK_NUMPAD2:
-                surfaceModel = 2;
+                changeSurface(2);
                 break;
             case KeyEvent.VK_NUMPAD3:
-                surfaceModel = 3;
+                changeSurface(3);
                 break;
             case KeyEvent.VK_NUMPAD4:
-                surfaceModel = 4;
+                changeSurface(4);
                 break;
             case KeyEvent.VK_NUMPAD5:
-                surfaceModel = 5;
+                changeSurface(5);
                 break;
             case KeyEvent.VK_NUMPAD6:
-                surfaceModel = 6;
+                changeSurface(6);
                 break;
             case KeyEvent.VK_NUMPAD7:
-                surfaceModel = 7;
+                changeSurface(7);
                 break;
             case KeyEvent.VK_NUMPAD8:
-                surfaceModel = 8;
+                changeSurface(8);
                 break;
             case KeyEvent.VK_NUMPAD9:
-                surfaceModel = 9;
+                changeSurface(9);
                 break;
 
             case KeyEvent.VK_L:

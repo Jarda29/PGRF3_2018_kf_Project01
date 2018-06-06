@@ -12,9 +12,28 @@ uniform mat4 mat;
 uniform int surfaceModel;
 uniform int lightMode;
 uniform float time;
-
+uniform int transformationProgress;
 
 const float PI = 3.14159265359;
+
+vec3 slowTransform(vec3 param1, vec3 param2){
+    vec3 diff = vec3(
+        param2.x - param1.x,
+        param2.y - param1.y,
+        param2.z - param1.z
+    );
+    vec3 step = vec3(
+        diff.x/100,
+        diff.y/100,
+        diff.z/100
+    );
+
+    return vec3(
+        param1.x + step.x * transformationProgress,
+        param1.y + step.y * transformationProgress,
+        param1.z + step.z * transformationProgress
+    );
+}
 
 // Převody soustav
 // r - poloměr, azimut - phi, zenit - theta
@@ -175,8 +194,12 @@ vec3 surface(vec2 param) {
             result = cylindricModel3(param);
             break;
     }
-
-    return result;
+    vec3 param1 = vec3(
+        param.x,
+        param.y,
+        0
+    );
+    return slowTransform(param1, result);
 }
 
 vec3 surfaceNormal(vec2 param) {
