@@ -162,8 +162,8 @@ vec3 surface(vec2 param) {
     vec3 result;
     switch(surfaceModel){
         case 0:
-            result.x = param.y;
-            result.y = param.x;
+            result.x = param.x;
+            result.y = param.y;
             result.z = 0;
             break;
         case 1:
