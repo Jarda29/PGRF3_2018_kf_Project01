@@ -207,11 +207,11 @@ vec3 getNewCoordinates(){
 
 vec3 surfaceNormal(vec2 param) {
     float delta = 1e-5;
-        vec3 tx = (surface(param + vec2(delta, 0), surfaceModel)
+    vec3 tx = (surface(param + vec2(delta, 0), surfaceModel)
                     - surface(param - vec2(delta, 0), surfaceModel)) / (2 * delta);
-        vec3 ty = (surface(param + vec2(0, delta), surfaceModel)
+    vec3 ty = (surface(param + vec2(0, delta), surfaceModel)
                     - surface(param - vec2(0, delta), surfaceModel)) / (2 * delta);
-        return cross(ty, tx);
+    return cross(ty, tx);
 }
 
 void main() {
@@ -229,6 +229,7 @@ void main() {
 
 	if(perVertex){
         vec3 lightVec = normalize(lightPos - worldPos);
+        normal = normalize(normal);
         intensity = dot(lightVec, normal);
         vertColor = vec3(normal.xyz);
 	}
