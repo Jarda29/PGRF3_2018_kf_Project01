@@ -23,9 +23,7 @@ public class Renderer implements GLEventListener, MouseListener,
     OGLRenderTarget renderTarget;
 
     int gridProgram, locGridMat, locGridEyePos, shaderProgramPost;
-    int locSurfaceMode, locLightMode, locColorMode, locTime, locBumpMode;
-
-    int locTransformationProgress;
+    int locSurfaceMode, locLightMode, locColorMode, locTime, locBumpMode,locTransformationProgress, locPostProcessMode, locTime2;
     int transformationProgress = 100;
 
     int surfaceModelPrevious = 0;
@@ -76,7 +74,15 @@ public class Renderer implements GLEventListener, MouseListener,
             "0.04 ; -0.02",
             "0.09 ; -0.02",};
 
-    private String[] textToBePrintedOnScreen = new String[5];
+    private int postProcessMode = 0;
+    private String[] postProcessModeText = {
+            "Default",
+            "Vlnění - X",
+            "Vlnění - Y",
+            "Vlnění - XY"
+    };
+
+    private String[] textToBePrintedOnScreen = new String[6];
 
     @Override
     public void init(GLAutoDrawable glDrawable) {
@@ -111,6 +117,9 @@ public class Renderer implements GLEventListener, MouseListener,
         locBumpMode = gl.glGetUniformLocation(gridProgram, "bumpMode");
         locTransformationProgress = gl.glGetUniformLocation(gridProgram, "transformationProgress");
         locSurfaceModelPrevious = gl.glGetUniformLocation(gridProgram, "surfaceModelPrevious");
+
+        locTime2 = gl.glGetUniformLocation(shaderProgramPost, "time");
+        locPostProcessMode = gl.glGetUniformLocation(shaderProgramPost, "postProcessMode");
 
         // load texture using JOGL objects
         // texture files are in /res/textures/
@@ -174,6 +183,8 @@ public class Renderer implements GLEventListener, MouseListener,
         gl.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         gl.glClear(GL2GL3.GL_COLOR_BUFFER_BIT | GL2GL3.GL_DEPTH_BUFFER_BIT);
         gl.glUseProgram(shaderProgramPost);
+        gl.glUniform1f(locTime2, time);
+        gl.glUniform1i(locPostProcessMode, postProcessMode);
         renderTarget.getColorTexture().bind(shaderProgramPost, "textureID", 0);
         strip.draw(GL2GL3.GL_TRIANGLE_STRIP, shaderProgramPost);
 
@@ -187,6 +198,7 @@ public class Renderer implements GLEventListener, MouseListener,
         textToBePrintedOnScreen[2] = "Light mode [L]: " + lightMode + " - " + lightModeText[lightMode];
         textToBePrintedOnScreen[3] = "Color mode [C]: " + colorMode + " - " + colorModeText[colorMode];
         textToBePrintedOnScreen[4] = "Bump mode [B]: " + bumpMode + " - " + bumpModeText[bumpMode];
+        textToBePrintedOnScreen[5] = "Post process Mode [P]: "+ postProcessMode + " - " + postProcessModeText[postProcessMode];
         displayText();
         textRenderer.drawStr2D(width - 150, 3, " (c) PGRF Jaroslav Langer");
     }
@@ -227,6 +239,13 @@ public class Renderer implements GLEventListener, MouseListener,
             bumpMode++;
         else
             bumpMode = 0;
+    }
+
+    private void changePostProcessMode(){
+        if(postProcessMode < postProcessModeText.length-1)
+            postProcessMode++;
+        else
+            postProcessMode = 0;
     }
 
     @Override
@@ -341,6 +360,9 @@ public class Renderer implements GLEventListener, MouseListener,
                 break;
             case KeyEvent.VK_B:
                 changeBumpMode();
+                break;
+            case KeyEvent.VK_P:
+                changePostProcessMode();
                 break;
         }
     }
