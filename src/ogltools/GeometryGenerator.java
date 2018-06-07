@@ -38,4 +38,10 @@ public class GeometryGenerator {
                 attribs,
                 ToIntArray.convert(indices));
     }
+
+    public static OGLBuffers generateStrip(GL2GL3 gl, final String variable) {
+        float[] triangles = {1, -1, 1, 1, -1, -1, -1, 1};
+        OGLBuffers.Attrib[] attributes = {new OGLBuffers.Attrib(variable, 2)};
+        return  new OGLBuffers(gl, triangles, attributes, null);
+    }
 }

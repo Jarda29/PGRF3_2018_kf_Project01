@@ -15,11 +15,14 @@ public class Renderer implements GLEventListener, MouseListener,
 
     int width, height, ox, oy;
 
-    OGLBuffers grid;
+    OGLBuffers grid, strip;
     OGLTextRenderer textRenderer;
+    OGLTexture2D texture;
+    OGLTexture2D textureSh;
+    OGLTexture2D textureSn;
+    OGLRenderTarget renderTarget;
 
-    int gridProgram, locGridMat, locGridEyePos;
-
+    int gridProgram, locGridMat, locGridEyePos, shaderProgramPost;
     int locSurfaceMode, locLightMode, locColorMode, locTime, locBumpMode;
 
     int locTransformationProgress;
@@ -28,9 +31,7 @@ public class Renderer implements GLEventListener, MouseListener,
     int surfaceModelPrevious = 0;
     int locSurfaceModelPrevious;
 
-    OGLTexture2D texture;
-    OGLTexture2D textureSh;
-    OGLTexture2D textureSn;
+
 
     Camera cam = new Camera();
     Mat4 proj;
@@ -90,13 +91,16 @@ public class Renderer implements GLEventListener, MouseListener,
         OGLUtils.printOGLparameters(gl);
 
         textRenderer = new OGLTextRenderer(gl, glDrawable.getSurfaceWidth(), glDrawable.getSurfaceHeight());
+        renderTarget = new OGLRenderTarget(gl, glDrawable.getSurfaceWidth(), glDrawable.getSurfaceHeight());
 
         // shader files are in /shaders/ directory
         // shaders directory must be set as a source directory of the project
         // e.g. in Eclipse via main menu Project/Properties/Java Build Path/Source
         gridProgram = ShaderUtils.loadProgram(gl, "/grid");
+        shaderProgramPost = ShaderUtils.loadProgram(gl, "/postBasic");
 
         grid = GeometryGenerator.createGrid(gl, 20, 20, "inPosition");
+        strip = GeometryGenerator.generateStrip(gl,"inPosition");
 
         locGridMat = gl.glGetUniformLocation(gridProgram, "mat");
         locGridEyePos = gl.glGetUniformLocation(gridProgram, "eyePos");
@@ -119,13 +123,21 @@ public class Renderer implements GLEventListener, MouseListener,
                 .withAzimuth(Math.PI * 1.25)
                 .withZenith(Math.PI * -0.125);
 
+
+        gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+
         gl.glEnable(GL2GL3.GL_DEPTH_TEST);
+
+        gl.glDisable(GL2GL3.GL_MULTISAMPLE);
+        gl.glDisable(GL2GL3.GL_LINE_SMOOTH);
+        gl.glDisable(GL2GL3.GL_POLYGON_SMOOTH);
         textureViewer = new OGLTexture2D.Viewer(gl);
     }
 
 
     @Override
     public void display(GLAutoDrawable glDrawable) {
+        renderTarget.bind();
         GL2GL3 gl = glDrawable.getGL().getGL2GL3();
 
         gl.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -155,13 +167,23 @@ public class Renderer implements GLEventListener, MouseListener,
         textureSn.bind(gridProgram, "textureSn", 2);
 
         grid.draw(GL2GL3.GL_TRIANGLES, gridProgram);
-
-
         textureViewer.view(texture, -1, -1, 0.5);
 
 
+        gl.glBindFramebuffer(GL2GL3.GL_FRAMEBUFFER, 0);
+        gl.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        gl.glClear(GL2GL3.GL_COLOR_BUFFER_BIT | GL2GL3.GL_DEPTH_BUFFER_BIT);
+        gl.glUseProgram(shaderProgramPost);
+        renderTarget.getColorTexture().bind(shaderProgramPost, "textureID", 0);
+        strip.draw(GL2GL3.GL_TRIANGLE_STRIP, shaderProgramPost);
+
+
+
         textToBePrintedOnScreen[0] = new String(this.getClass().getName() + ": [LMB] camera, WSAD");
-        textToBePrintedOnScreen[1] = "Surface model [NUM 0-9]: " + surfaceModel + " - " + surfaceModelText[surfaceModel];
+        if(transformationProgress<100)
+            textToBePrintedOnScreen[1] = "Surface model [NUM 0-9]: " + surfaceModel + " - " + surfaceModelText[surfaceModel] + "("+transformationProgress+"%)";
+        else
+            textToBePrintedOnScreen[1] = "Surface model [NUM 0-9]: " + surfaceModel + " - " + surfaceModelText[surfaceModel];
         textToBePrintedOnScreen[2] = "Light mode [L]: " + lightMode + " - " + lightModeText[lightMode];
         textToBePrintedOnScreen[3] = "Color mode [C]: " + colorMode + " - " + colorModeText[colorMode];
         textToBePrintedOnScreen[4] = "Bump mode [B]: " + bumpMode + " - " + bumpModeText[bumpMode];
