@@ -79,7 +79,10 @@ public class Renderer implements GLEventListener, MouseListener,
             "Default",
             "Vlnění - X",
             "Vlnění - Y",
-            "Vlnění - XY"
+            "Vlnění - XY",
+            "Blur",
+            "Blur + vlnění",
+            "Grey"
     };
 
     private String[] textToBePrintedOnScreen = new String[6];
