@@ -1,3 +1,4 @@
+Projekt1:
 Vycházel jsem z nasdíleného projektu 2018-pgrf3-cKF
 
 Tedy, úplně stejné závislosti a nastavení struktury projektu.
@@ -8,4 +9,10 @@ Adresáře res a shaders označit jako resources
 Ovládání typické WASD.
 
 Přepínání různých modů zobrazení viz levý horní roh v aplikaci.
+
+Projekt2:
+Realtime morfing objektů
+Přidán post processing
+-vlnění, blur,kombinace blur a vlnění, šedý odstín
+
 
