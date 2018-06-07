@@ -135,14 +135,7 @@ public class Renderer implements GLEventListener, MouseListener,
                 .withAzimuth(Math.PI * 1.25)
                 .withZenith(Math.PI * -0.125);
 
-
-        gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-
         gl.glEnable(GL2GL3.GL_DEPTH_TEST);
-
-        gl.glDisable(GL2GL3.GL_MULTISAMPLE);
-        gl.glDisable(GL2GL3.GL_LINE_SMOOTH);
-        gl.glDisable(GL2GL3.GL_POLYGON_SMOOTH);
         textureViewer = new OGLTexture2D.Viewer(gl);
     }
 
